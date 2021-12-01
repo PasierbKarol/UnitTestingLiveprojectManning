@@ -28,9 +28,7 @@ public class BugsTest {
         Asset celeb = givenAssetInResultsWithVendor(celebPartner);
 
         ArrayList<Asset> expected = new ArrayList<>();
-       expected.add(missingBigShots);
        expected.add(celeb);
-       expected.add(givenAssetInResultsWithVendor(bigShotsPartner));
        expected.add(givenAssetInResultsWithVendor(bigShotsPartner));
        expected.add(givenAssetInResultsWithVendor(bigShotsPartner));
        expected.add(givenAssetInResultsWithVendor(bigShotsPartner));
@@ -57,14 +55,12 @@ public class BugsTest {
     private void thenHotspotDoesNotHave(HotspotKey key, Asset asset) {
         var members = searchResults.getHotspot(key).getMembers();
         for (Asset member : members) {
-            assertFalse(members.equals(asset));
+            assertNotEquals(member, asset);
         }
     }
 
     private void thenHotspotHasExactly(HotspotKey key, List<Asset> expected) {
-        var members = searchResults.getHotspot(key).getMembers();
-        for (Asset asset : expected) {
-            assertTrue(members.contains(asset));
-        }
+        var members = searchResults.getHotspot(key).getMembers().toArray();
+        assertArrayEquals(members, expected.toArray());
     }
 }
