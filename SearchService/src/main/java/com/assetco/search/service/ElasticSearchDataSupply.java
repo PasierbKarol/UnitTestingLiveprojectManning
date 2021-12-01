@@ -24,7 +24,8 @@ public class ElasticSearchDataSupply {
         try {
             var results = mapper.readValue(document, SearchAsset[].class);
             for (var result : results) {
-                var topics = Arrays.stream(result.topics).map(topicId -> new AssetTopic(topicId, null)).toArray(AssetTopic[]::new);
+                var topics = Arrays.stream(result.topics)
+                        .map(topicId -> new AssetTopic(topicId, null)).toArray(AssetTopic[]::new);
 
                 searchResults.addFound(
                         new Asset(

@@ -102,7 +102,7 @@ class TopicsBasedOptimizer {
     }
 
     /**
-     * Checks to see if the topic on the left is higher-priority than the topc on the right.
+     * Checks to see if the topic on the left is higher-priority than the topic on the right.
      */
     private boolean isHotterTopic(AssetTopic left, AssetTopic right, ArrayList<AssetTopic> hotTopics) {
         var canonicalLeft = hotTopics.stream().filter(getAssetTopicPredicate(left)).findFirst().get();

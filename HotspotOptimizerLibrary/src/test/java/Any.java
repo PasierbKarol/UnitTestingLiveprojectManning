@@ -1,13 +1,16 @@
-package com.assetco.search.results;
+import com.assetco.search.results.*;
 
-import java.math.*;
-import java.net.*;
-import java.util.*;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Used to generate test data.
  */
-public class Any {
+class Any {
 
     private static Random random = new Random();
 
@@ -74,6 +77,20 @@ public class Any {
      */
     public static Asset asset() {
         return new Asset(string(), string(), URI(), URI(), assetPurchaseInfo(), assetPurchaseInfo(), setOfTopics(), vendor());
+    }
+
+    /**
+     * Generate a complete asset that can be used for testing.
+     */
+    public static Asset assetWithVendor(AssetVendor vendor) {
+        return new Asset(string(), string(), URI(), URI(), assetPurchaseInfo(), assetPurchaseInfo(), setOfTopics(), vendor);
+    }
+
+    /**
+     * Generate a complete asset that can be used for testing.
+     */
+    public static Asset assetWithVendorAndId(AssetVendor vendor, String id) {
+        return new Asset(id, string(), URI(), URI(), assetPurchaseInfo(), assetPurchaseInfo(), setOfTopics(), vendor);
     }
 
     /**
