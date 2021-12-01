@@ -52,15 +52,14 @@ public class BugsTest {
         sut.optimize(searchResults);
     }
 
-    private void thenHotspotDoesNotHave(HotspotKey key, Asset asset) {
+    private void thenHotspotDoesNotHave(HotspotKey key, Asset... assets) {
         var members = searchResults.getHotspot(key).getMembers();
-        for (Asset member : members) {
-            assertNotEquals(member, asset);
+        for (Asset asset : assets) {
+            assertFalse(members.contains(asset));
         }
     }
 
     private void thenHotspotHasExactly(HotspotKey key, List<Asset> expected) {
-        var members = searchResults.getHotspot(key).getMembers().toArray();
-        assertArrayEquals(members, expected.toArray());
+        assertArrayEquals(expected.toArray(), searchResults.getHotspot(key).getMembers().toArray());
     }
 }
