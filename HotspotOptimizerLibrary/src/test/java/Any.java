@@ -72,6 +72,10 @@ class Any {
         return new AssetVendor(string(), string(), relationshipLevel(), anyLong());
     }
 
+    static AssetVendor vendorWithLevel(AssetVendorRelationshipLevel level) {
+        return new AssetVendor(string(), string(), level, anyLong());
+    }
+
     /**
      * Generate a complete asset that can be used for testing.
      */
