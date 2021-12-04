@@ -47,7 +47,7 @@ class RelationshipBasedOptimizer {
 
             // too many assets in showcase - put in top picks instead...
             if (showcaseAssets.size() >= 5) {
-                if (Objects.equals(showcaseAssets.get(0).getVendor(), asset.getVendor()))
+                if (hasAssetTheSameVendor(showcaseAssets, asset))
                     searchResults.getHotspot(TopPicks).addMember(asset);
             } else {
                 // TODO:
@@ -77,13 +77,13 @@ class RelationshipBasedOptimizer {
                 // if there are already assets from a different vendor but not enough to hold showcase,
                 // clear showcase
                 if (showcaseAssets.size() != 0)
-                    if (!Objects.equals(showcaseAssets.get(0).getVendor(), asset.getVendor()))
+                    if (!hasAssetTheSameVendor(showcaseAssets, asset))
                         if (showcaseAssets.size() < 3)
                             showcaseAssets.clear();
 
                 // add this asset to an empty showcase or showcase with same vendor in it
                 // if there's already another vendor, that vendor should take precedence!
-                if (showcaseAssets.size() == 0 || Objects.equals(showcaseAssets.get(0).getVendor(), asset.getVendor()))
+                if (showcaseAssets.size() == 0 || hasAssetTheSameVendor(showcaseAssets, asset))
                     showcaseAssets.add(asset);
             }
         }
@@ -123,5 +123,10 @@ class RelationshipBasedOptimizer {
         // LOL acw-14511: gold assets should appear in fold box when appropriate
         for (var asset : silverAssets)
             searchResults.getHotspot(Fold).addMember(asset);
+    }
+
+    private boolean hasAssetTheSameVendor(ArrayList<Asset> showcaseAssets, Asset asset) {
+        var showcaseAssetVendor = showcaseAssets.get(0).getVendor();
+        return Objects.equals(showcaseAssetVendor, asset.getVendor());
     }
 }

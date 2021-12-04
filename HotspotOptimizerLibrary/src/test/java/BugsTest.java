@@ -29,7 +29,7 @@ public class BugsTest {
         givenAssetInResultsWithVendor(makeVendor(AssetVendorRelationshipLevel.Partner));
 
         ArrayList<Asset> expected = new ArrayList<>();
-//        expected.add(missing);
+        expected.add(missing);
         expected.add(givenAssetInResultsWithVendor(partnerVendor));
         expected.add(givenAssetInResultsWithVendor(partnerVendor));
         expected.add(givenAssetInResultsWithVendor(partnerVendor));
