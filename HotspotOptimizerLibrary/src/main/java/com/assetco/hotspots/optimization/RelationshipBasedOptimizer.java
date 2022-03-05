@@ -2,7 +2,9 @@ package com.assetco.hotspots.optimization;
 
 import com.assetco.search.results.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.assetco.search.results.AssetVendorRelationshipLevel.*;
 import static com.assetco.search.results.HotspotKey.*;
@@ -27,7 +29,7 @@ class RelationshipBasedOptimizer {
         // don't affect a showcase built by an earlier rule
         var showcaseFull = searchResults.getHotspot(Showcase).getMembers().size() > 0;
         var showcaseAssets = new ArrayList<Asset>();
-        var partnerAssets = new ArrayList<Asset>();
+        var partnerAssets = new HashMap<String, ArrayList<Asset>>();
         var goldAssets = new ArrayList<Asset>();
         var silverAssets = new ArrayList<Asset>();
 
@@ -43,7 +45,7 @@ class RelationshipBasedOptimizer {
                 continue;
 
             // remember this partner asset
-            partnerAssets.add(asset);
+            addOrUpdatePartnerAsset(partnerAssets, asset);
 
             // too many assets in showcase - put in top picks instead...
             if (showcaseAssets.size() >= 5) {
@@ -78,13 +80,16 @@ class RelationshipBasedOptimizer {
                 // clear showcase
                 if (showcaseAssets.size() != 0)
                     if (!hasAssetTheSameVendor(showcaseAssets, asset))
-                        if (showcaseAssets.size() < 3)
+                        if (showcaseAssets.size() < 3) {
                             showcaseAssets.clear();
+                        }
 
                 // add this asset to an empty showcase or showcase with same vendor in it
                 // if there's already another vendor, that vendor should take precedence!
-                if (showcaseAssets.size() == 0 || hasAssetTheSameVendor(showcaseAssets, asset))
+                if (showcaseAssets.size() == 0 || hasAssetTheSameVendor(showcaseAssets, asset)) {
+                    String vendorId = asset.getVendor().getId();
                     showcaseAssets.add(asset);
+                }
             }
         }
 
@@ -96,12 +101,13 @@ class RelationshipBasedOptimizer {
 
         // todo - this does not belong here!!!
         var highValueHotspot = searchResults.getHotspot(HighValue);
-        for (var asset : partnerAssets)
+        var a = new ArrayList<Asset>();
+        for (var asset : partnerAssets.values().stream().flatMap(Collection::stream).collect(Collectors.toList()))
             if (!highValueHotspot.getMembers().contains(asset))
                 highValueHotspot.addMember(asset);
 
         // TODO - this needs to be moved to something that only manages the fold
-        for (var asset : partnerAssets)
+        for (var asset : partnerAssets.values().stream().flatMap(Collection::stream).collect(Collectors.toList()))
             searchResults.getHotspot(Fold).addMember(asset);
 
         // only copy showcase assets into hotspot if there are enough for a partner to claim the showcase
@@ -128,5 +134,16 @@ class RelationshipBasedOptimizer {
     private boolean hasAssetTheSameVendor(ArrayList<Asset> showcaseAssets, Asset asset) {
         var showcaseAssetVendor = showcaseAssets.get(0).getVendor();
         return Objects.equals(showcaseAssetVendor, asset.getVendor());
+    }
+
+    private void addOrUpdatePartnerAsset(HashMap<String, ArrayList<Asset>> partners, Asset asset) {
+        String vendorKey = asset.getVendor().getId();
+        if (partners.containsKey(vendorKey)) {
+            partners.get(vendorKey).add(asset);
+        } else {
+            var assetsList = new ArrayList<Asset>();
+            assetsList.add(asset);
+            partners.put(vendorKey, assetsList);
+        }
     }
 }
